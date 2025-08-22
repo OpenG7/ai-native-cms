@@ -1,0 +1,12 @@
+{
+  "name": "openg7-ai-module-schema-validator",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate:manifests": "node scripts/validate-manifests.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "globby": "^14.0.2"
+  }
+}

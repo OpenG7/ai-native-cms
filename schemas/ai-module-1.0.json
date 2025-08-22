@@ -1,0 +1,312 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openg7.org/schemas/ai-module-1.0.json",
+  "title": "OpenG7 AI Module Manifest v1.0",
+  "type": "object",
+  "required": [
+    "manifestVersion",
+    "id",
+    "name",
+    "version",
+    "description",
+    "engine",
+    "permissions",
+    "events",
+    "tools"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifestVersion": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+([.-][a-z0-9]+)+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z\\.-]+)?$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "engine": {
+      "type": "object",
+      "required": [
+        "compatibleWith"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "compatibleWith": {
+          "type": "string"
+        },
+        "minSchema": {
+          "type": "string"
+        }
+      }
+    },
+    "author": {
+      "type": "string"
+    },
+    "homepage": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "license": {
+      "type": "string"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(content|schema|embedding|model|asset|event|queue|schedule|http|secret|admin:settings|telemetry|pii):[A-Za-z0-9\\*:_-]+$"
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z.:-]+$"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "throttleMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "debounceMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "maxConcurrent": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "ackPolicy": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "manual"
+            ]
+          }
+        }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "inputSchema",
+          "outputSchema"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9._-]+$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ],
+            "default": "private"
+          },
+          "inputSchema": {
+            "type": "object"
+          },
+          "outputSchema": {
+            "type": "object"
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 120000
+          },
+          "rateLimit": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "second",
+                  "minute",
+                  "hour",
+                  "day"
+                ]
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "cache": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "ttlSeconds": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "idempotent": {
+            "type": "boolean",
+            "default": true
+          },
+          "privacy": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "pii": {
+                "type": "string",
+                "enum": [
+                  "avoid",
+                  "allow"
+                ],
+                "default": "avoid"
+              }
+            }
+          }
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "type": "object"
+        },
+        "ui": {
+          "type": "object"
+        }
+      }
+    },
+    "secrets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]+$"
+          },
+          "required": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "versionRange"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "versionRange": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sandbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "externalNetwork": {
+          "type": "boolean"
+        },
+        "allowedDomains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tmpFs": {
+          "type": "boolean"
+        },
+        "nodePermissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "i18n": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
